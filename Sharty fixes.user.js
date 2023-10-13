@@ -1,9 +1,6 @@
 // ==UserScript==
 // @name        Sharty fixes
-// @description Enhancements for the 'ty
-// @version     2.17
-// @author      Xyl
-// @namespace   xyl
+// @namespace   soyjak.party
 // @match       http*://soyjak.party/*
 // @match       http*://soyjaks.party/*
 // @match       http*://www.soyjak.party/*
@@ -14,9 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
+// @version     2.17.1
+// @author      Xyl
+// @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.17";
+const version = "v2.17.1";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -551,7 +551,7 @@ if (document.body.classList.contains("active-catalog")) {
     </form>
   `);
   let hiddenThreads = getJson("hiddenthreads");
-  let hasThreads = hiddenThreads.hasOwnProperty(board);
+  let hasThreads = hiddenThreads && hiddenThreads.hasOwnProperty(board);
   document.querySelectorAll(".mix").forEach(e => {
     e.classList.add("catty-thread");
     if (hasThreads && hiddenThreads[board].hasOwnProperty(e.getAttribute("data-id"))) {
@@ -828,14 +828,6 @@ if (blotter = document.querySelector(".blotter")) {
     document.body.classList.add("hidden-blotter");
   }
 }
-
-if (blotter = document.querySelector(".blotter")) {
-  blotter.insertAdjacentHTML("beforebegin", `<a class="hide-blotter" href="javascript:void(0)">[–]</a>`);
-  if (blotter.innerText == getValue("hidden-blotter") || isEnabled("hide-blotter")) {
-    document.body.classList.add("hidden-blotter");
-  }
-}
-
 
 document.head.insertAdjacentHTML("beforeend", `
 <style>
