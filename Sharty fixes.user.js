@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.17.2
+// @version     2.17.3
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.17.2";
+const version = "v2.17.3";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -924,15 +924,6 @@ document.head.insertAdjacentHTML("beforeend", `
 
   .comment-quotes {
     text-align: center;
-  }
-
-  .sqr-captcha {
-    min-width: unset !important;
-  }
-
-  .sqr-captcha-best-hash,
-  .sqr-captcha-description {
-    display: none;
   }
 
   ${isEnabled("truncate-long-posts") ? `
