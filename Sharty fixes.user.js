@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.18
+// @version     2.19
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.18";
+const version = "v2.19";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -160,20 +160,25 @@ const optionsEntries = {
   "catalog-navigation": ["checkbox", "Board list links to catalogs when on catalog", true],
   "hide-ads": ["checkbox", "Hide self-serve ads", true]
 }
-let options = Options.add_tab("sharty-fixes", "gear", "Sharty Fixes").content[0];
-let optionsHTML = `<span style="display: block; text-align: center">${version}</span>`;
-optionsHTML += `<a style="display: block; text-align: center" href="https://booru.soy/post/list/variant%3Acobson/1">#cobgang</a><br>`;
-for ([optKey, optValue] of Object.entries(optionsEntries)) {
-  optionsHTML += `<input type="${optValue[0]}" id="${optKey}" name="${optKey}"><label for="${optKey}">${optValue[1]}</label><br>`;
-}
-options.insertAdjacentHTML("beforeend", optionsHTML);
 
-options.querySelectorAll("input[type=checkbox]").forEach(e => {
-  e.checked = isEnabled(e.id);
-  e.addEventListener("change", e => {
-    setValue(e.target.id, e.target.checked);
+try {
+  let options = Options.add_tab("sharty-fixes", "gear", "Sharty Fixes").content[0];
+  let optionsHTML = `<span style="display: block; text-align: center">${version}</span>`;
+  optionsHTML += `<a style="display: block; text-align: center" href="https://booru.soy/post/list/variant%3Acobson/1">#cobgang</a><br>`;
+  for ([optKey, optValue] of Object.entries(optionsEntries)) {
+    optionsHTML += `<input type="${optValue[0]}" id="${optKey}" name="${optKey}"><label for="${optKey}">${optValue[1]}</label><br>`;
+  }
+  options.insertAdjacentHTML("beforeend", optionsHTML);
+
+  options.querySelectorAll("input[type=checkbox]").forEach(e => {
+    e.checked = isEnabled(e.id);
+    e.addEventListener("change", e => {
+      setValue(e.target.id, e.target.checked);
+    });
   });
-});
+} catch {
+  console.log("Options not found...")
+}
 
 // redirect
 if (location.origin.match(/(http:|\/www)/g)) {
@@ -331,7 +336,16 @@ function fixTime() {
   });
 }
 
+function archive404() {
+  if (!document.querySelector("link[href*='404style']") || !window.location.pathname.includes("thread")) return;
+
+  let archiveLink = `https://archive.soyjak.in${window.location.pathname.replace(".html", "").replace("#q", "#")}`;
+  document.querySelector("input[type=button]").insertAdjacentHTML(`afterend`,
+  `<br><br><input type="button" value="Check the archive" onclick="window.location = '${archiveLink}'">`);
+}
+
 function initFixes() {
+  archive404();
   document.querySelectorAll("form[name=post] th").forEach(e => {
     if (e.innerText == "Comment") {
       e.insertAdjacentHTML("beforeend", `<sup title="Formatting help" class="sf-formatting-help">?</sup><br><div class="comment-quotes"><a href="javascript:void(0);" class="comment-quote">[>]</a><a href="javascript:void(0);" class="comment-orange">[<]</a></div>`);
