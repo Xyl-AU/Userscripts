@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.17.4
+// @version     2.18
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.17.4";
+const version = "v2.18";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -204,6 +204,7 @@ function fixPost(post) {
   let isOwnPost;
   let postNumber = post.getElementsByClassName("post_no")[1];
   let postText = postNumber.textContent;
+  let thread = post.closest(".thread");
 
   if (email = post.querySelector("a.email")) {
     if (isEnabled("hide-sage-images") && !post.classList.contains("image-hide-processed") && email.href.match(/mailto:sage$/i)) {
@@ -222,6 +223,8 @@ function fixPost(post) {
   if (isOwnPost && getNumber("lastTime") < time.getTime()) {
     setValue("lastTime", time.getTime());
   }
+  let archiveLink = `https://archive.soyjak.in/${thread.getAttribute("data-board")}/thread/${thread.id.split("_")[1]}#${postNumber.textContent}`;
+  postNumber.insertAdjacentHTML("afterend", `<a href=${archiveLink} target="_blank">[A]</a>`);
   timeElement.outerHTML = `<span datetime=${timeElement.getAttribute("datetime")}>${timeElement.innerText}</span>`;
   post.querySelector(".intro").insertAdjacentHTML("beforeend", `<span class="quote-buttons"></span>`);
   if (isEnabled("show-quote-button")) {
