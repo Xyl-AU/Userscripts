@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.17.3
+// @version     2.17.4
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.17.3";
+const version = "v2.17.4";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -665,9 +665,15 @@ document.addEventListener("click", e => {
       <span class="heading">==redtext==</span><br>
       <span class="heading2">--bluetext--</span><br>
       <span class="spoiler">**spoiler**</span><br>
-      <span class="datamining">%%glowing%%</span><br>
+      <span class="glow">%%glow%%</span><br>
+      <span style="text-shadow:0px 0px 40px #fffb00, 0px 0px 2px #fffb00">::yellow glow::</span><br>
+      <span class="rotate">#spintext#</span><br>
+      <big>+=big text=+</big><br>
       <em>''italics''</em><br>
       <b>'''bold'''</b><br>
+      <u>__underline__</u><br>
+      <s>~~strikethrough~~</s><br>
+      <code>\`\`\`code\`\`\`</code><br>
     `;
     customAlert(help)
   } else if (t.id == "sf-file-url" && !t.classList.contains("sf-loading")) {
