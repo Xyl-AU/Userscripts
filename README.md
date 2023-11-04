@@ -6,6 +6,10 @@ A collection of my personal userscripts.
 
 Display & save stickers from all channels on Cozy.tv.
 
+## [Dynamic catty](https://github.com/Xyl-AU/Userscripts/raw/master/Dynamic%20catty.user.js)
+
+Load the sharty index and catalog dynamically (requires Sharty fixes)
+
 ## [Reddit Uncollapse](https://github.com/Xyl-AU/Userscripts/raw/master/Reddit%20Uncollapse.user.js)
 
 Expand auto-collapsed comments on old Reddit.
