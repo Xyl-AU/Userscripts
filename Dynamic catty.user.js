@@ -6,12 +6,12 @@
 // @exclude     /https?://(?:www.)?soyjak.party/[a-zA-Z\d]*.html/
 // @grant       GM_getValue
 // @grant       GM_setValue
-// @version     1.0.24
+// @version     1.0.25
 // @author      Xyl
 // @description Load the sharty index and catalog dynamically
 // ==/UserScript==
 
-const version = "v1.0.24";
+const version = "v1.0.25";
 console.log(`Dynamic catty ${version}`);
 
 const namespace = "DynamicCatty.";
@@ -449,9 +449,9 @@ function makeIndexThread(thread, reqBoard, expanded) {
         <input type="checkbox" class="delete" name="delete_${post.no}" id="delete_${post.no}">
         <label for="delete_${post.no}">
         ${post.hasOwnProperty("sub") ? `<span class="subject">${post.sub}</span>` : ""}
-          <span class="poster ${post.hasOwnProperty("capcode") ? post.capcode : ""}">
+          <span class="poster${post.hasOwnProperty("capcode") ? " has-capcode" : ""}">
             ${post.hasOwnProperty("email") ? `<a class="email" href="mailto:${post.email}">` : ""}
-            <span class="name">${post.hasOwnProperty("name") ? post.name : ""}${isOwnPost ? `<span class="own_post"> (You)</span>` : ""}</span>${post.hasOwnProperty("trip") ? `<span class="trip">${post.trip}</span>` : ""}${post.hasOwnProperty("email") ? `</a>` : ""}</span>
+            <span class="name">${post.hasOwnProperty("name") ? post.name : ""}${post.hasOwnProperty("capcode") ? `<span class="capcode"> ## ${post.capcode}</span>` : ""}${isOwnPost ? `<span class="own_post"> (You)</span>` : ""}</span>${post.hasOwnProperty("trip") ? `<span class="trip">${post.trip}</span>` : ""}${post.hasOwnProperty("email") ? `</a>` : ""}</span>
           ${post.hasOwnProperty("country") ? `<img class="flag" src="/static/flags/${post.country.toLowerCase()}.png" style="width:16px; height:11px;" alt="${post.country_name}" title="${post.country_name}">` : ""}
           <time datetime="${timestampToUTCString(post.time)}" title="${timeText}">${timestampToRelativeTime(post.time)}</time>
         </label>
@@ -1186,6 +1186,15 @@ function addExtras() {
   header > * {
     text-align: center;
     width: 100%;
+  }
+
+  .capcode {
+    font-weight: normal;
+  }
+
+  .has-capcode > .name,
+  .has-capcode > .capcode {
+    color: red !important;
   }
   </style>`);
 
