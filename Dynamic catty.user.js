@@ -6,12 +6,12 @@
 // @exclude     /https?://(?:www.)?soyjak.party/[a-zA-Z\d]*.html/
 // @grant       GM_getValue
 // @grant       GM_setValue
-// @version     1.0.23
+// @version     1.0.24
 // @author      Xyl
-// @description Load the sharty index and catalog dynamically (requires Sharty fixes)
+// @description Load the sharty index and catalog dynamically
 // ==/UserScript==
 
-const version = "v1.0.23";
+const version = "v1.0.24";
 console.log(`Dynamic catty ${version}`);
 
 const namespace = "DynamicCatty.";
@@ -127,7 +127,7 @@ function initialise() {
   pageSelector += `<a href="${window.location.origin}/${board}/#catalog">Catalog</a></div><hr>`;
   document.querySelectorAll(".subtitle a[href*=catalog]").forEach(e => e.remove());
   document.querySelectorAll(`form[name=postcontrols], .pages, form[action="/search.php"]`).forEach(e => e.remove());
-  document.querySelector("center").insertAdjacentHTML("beforeend", `<a href="javascript:void(0)" id="show-post-form">Post Form]</a>`);
+  document.querySelector("header").insertAdjacentHTML("beforeend", `<a href="javascript:void(0)" id="show-post-form">Post Form]</a>`);
   let settings = JSON.parse(localStorage.getItem("catalog"));
   let sort = getValue("lastSort") ? getValue("lastSort") : "bump:desc";
   let size = getValue("imageSize") ? getValue("imageSize") : "small";
@@ -1181,6 +1181,11 @@ function addExtras() {
 
   form[name=post] > iframe[src*=kaptcha] {
     display: none;
+  }
+
+  header > * {
+    text-align: center;
+    width: 100%;
   }
   </style>`);
 
