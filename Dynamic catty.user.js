@@ -6,12 +6,12 @@
 // @exclude     /https?://(?:www.)?soyjak.party/[a-zA-Z\d]*.html/
 // @grant       GM_getValue
 // @grant       GM_setValue
-// @version     1.0.25
+// @version     1.0.26
 // @author      Xyl
 // @description Load the sharty index and catalog dynamically
 // ==/UserScript==
 
-const version = "v1.0.25";
+const version = "v1.0.26";
 console.log(`Dynamic catty ${version}`);
 
 const namespace = "DynamicCatty.";
@@ -871,7 +871,7 @@ function addExtras() {
             if (!thread.classList.contains("loading-hover")) {
               thread.classList.add("loading-hover");
               if (t.matches(".body a") && t.href.match("/thread/")) {
-                loadFullThread(t.href.match(/\d*(?=\.html)/), t.href.match(/[a-zA-Z0-9]*(?=\/+res)/), false, [highlight, e]);
+                loadFullThread(t.href.match(/\d*(?=\.html)/), t.href.match(/[a-zA-Z0-9]*(?=\/+thread)/), false, [highlight, e]);
 
               } else {
                 loadFullThread(thread.id.split("_")[1], board, false);
