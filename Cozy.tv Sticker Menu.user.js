@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name         Cozy.tv Sticker Menu
 // @description  Display & save stickers from all channels on Cozy.tv
-// @version      1.0.0
+// @version      1.0.1
 // @author       Xyl
 // @namespace    xyl
-// @icon         https://cozy.tv/public/cz_fav_128.png
+// @icon         https://cozy.tv/favicon.ico
 // @match        https://cozy.tv/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // ==/UserScript==
 
-let version = "1.0.0";
+let version = "1.0.1";
 let stickers = document.createElement("template");
 let saved = document.createElement("template");
 let lastPath = "";
