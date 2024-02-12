@@ -6,12 +6,12 @@
 // @exclude     /https?://(?:www.)?soyjak.party/[a-zA-Z\d]*.html/
 // @grant       GM_getValue
 // @grant       GM_setValue
-// @version     1.0.26
+// @version     1.0.27
 // @author      Xyl
 // @description Load the sharty index and catalog dynamically
 // ==/UserScript==
 
-const version = "v1.0.26";
+const version = "v1.0.27";
 console.log(`Dynamic catty ${version}`);
 
 const namespace = "DynamicCatty.";
@@ -477,7 +477,7 @@ function postFixes() {
     if (o && e.closest(".thread") == o.closest(".thread")) {
       e.href = `#${e.innerText.substr(2)}`
       let replyId = e.closest(".post").id.split("_")[1];
-      if (!o.querySelector(`.mentioned a[href="#${replyId}"]`)) {
+      if (!o.querySelector(`.mentioned a[href*="#${replyId}"]`)) {
         o.querySelector(".mentioned").insertAdjacentHTML("beforeend", `<a class="mentioned-${replyId}" onclick="highlightReply(${replyId});" href="#${replyId}">&gt;&gt;${replyId}</a>`);
       }
     }
@@ -772,7 +772,8 @@ function addExtras() {
         o.classList.add("click-highlight");
         window.scrollTo({top: o.getBoundingClientRect().top - document.querySelector(".boardlist").getBoundingClientRect().height + window.pageYOffset});
       } else {
-        window.location = `${domain}/${board}/thread/${t.closest(".thread").id.split("_")[1]}.html${t.getAttribute("href")}`;
+        console.log("awa")
+        window.location = `${domain}/${board}/thread/${t.closest(".thread").id.split("_")[1]}.html${t.getAttribute("href").split("/").pop()}`;
       }
     } else if (t.classList.contains("hide-toggle")) {
       t.parentNode.classList.toggle("thread-hidden") ? addToJson("hiddenthreads", `${board}.${t.parentNode.id.split("_")[1]}`, Math.floor(Date.now() / 1000)) : removeFromJson("hiddenthreads", `${board}.${t.parentNode.id.split("_")[1]}`);
