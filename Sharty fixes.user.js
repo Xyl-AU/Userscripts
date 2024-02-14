@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.19.1
+// @version     2.20
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.19.1";
+const version = "v2.20";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -228,8 +228,6 @@ function fixPost(post) {
   if (isOwnPost && getNumber("lastTime") < time.getTime()) {
     setValue("lastTime", time.getTime());
   }
-  let archiveLink = `https://archive.soyjak.in/${thread.getAttribute("data-board")}/thread/${thread.id.split("_")[1]}#p${postNumber.textContent}`;
-  postNumber.insertAdjacentHTML("afterend", `<a href=${archiveLink} target="_blank">[A]</a>`);
   timeElement.outerHTML = `<span datetime=${timeElement.getAttribute("datetime")}>${timeElement.innerText}</span>`;
   post.querySelector(".intro").insertAdjacentHTML("beforeend", `<span class="quote-buttons"></span>`);
   if (isEnabled("show-quote-button")) {
@@ -336,16 +334,7 @@ function fixTime() {
   });
 }
 
-function archive404() {
-  if (!document.querySelector("link[href*='404style']") || !window.location.pathname.includes("thread")) return;
-
-  let archiveLink = `https://archive.soyjak.in${window.location.pathname.replace(".html", "").replace("#q", "#").replace("#", "#p")}`;
-  document.querySelector("input[type=button]").insertAdjacentHTML(`afterend`,
-  `<br><br><input type="button" value="Check the archive" onclick="window.location = '${archiveLink}'">`);
-}
-
 function initFixes() {
-  archive404();
   document.querySelectorAll("form[name=post] th").forEach(e => {
     if (e.innerText == "Comment") {
       e.insertAdjacentHTML("beforeend", `<sup title="Formatting help" class="sf-formatting-help">?</sup><br><div class="comment-quotes"><a href="javascript:void(0);" class="comment-quote">[>]</a><a href="javascript:void(0);" class="comment-orange">[<]</a></div>`);
