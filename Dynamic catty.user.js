@@ -6,12 +6,12 @@
 // @exclude     /https?://(?:www.)?soyjak.party/[a-zA-Z\d]*.html/
 // @grant       GM_getValue
 // @grant       GM_setValue
-// @version     1.0.27
+// @version     1.1.0
 // @author      Xyl
 // @description Load the sharty index and catalog dynamically
 // ==/UserScript==
 
-const version = "v1.0.27";
+const version = "v1.1.0";
 console.log(`Dynamic catty ${version}`);
 
 const namespace = "DynamicCatty.";
@@ -90,7 +90,7 @@ function removeFromJson(key, jsonKey) {
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const imageFiles = [".jpg", ".jpe", ".jpeg", ".pjpeg", ".pjp", ".jfif", ".png", ".apng", ".gif", ".bmp", ".tiff", ".avif"];
+const imageFiles = [".jpg", ".jpe", ".jpeg", ".pjpeg", ".pjp", ".jfif", ".png", ".apng", ".gif", ".bmp", ".tiff", ".avif", ".webp"];
 const audioFiles = [".aac", ".mp3", ".m4a", ".flac", ".wav", ".ogg", ".oga", ".opus", ".wma"];
 const videoFiles = [".3gp", ".mpg", ".mpeg", ".mp4", ".m4v", ".m4p", ".ogv", ".webm", ".mkv", ".mov", ".wmv", ".flv"];
 const domain = window.location.origin;
@@ -270,7 +270,29 @@ function sortThreads(threadList) {
   });
 }
 
-function getThumbnailUrl(tim, ext, reqBoard) {
+function getThumbnailUrl(tim, ext, embed, reqBoard) {
+  if (embed) {
+    if (embed.includes("youtube")) {
+      let id = embed.match(/(?<=youtube.com\/embed\/).*(?=">)/)[0];
+      return [`https://img.youtube.com/vi/${id}/0.jpg`, false]
+    }
+
+    if (embed.includes("dailymotion")) {
+      let url = embed.match(/(?<=src=").*(?=")/)[0].replace("embed", "thumbnail");
+      return [url, false];
+    }
+
+    if (embed.includes("vimeo")) {
+      let id = embed.match(/(?<=vimeo.com\/video\/).*(?=">)/)[0];
+      return [`https://vumbnail.com/${id}`, false];
+    }
+
+
+    if (embed.includes("vocaroo")) {
+      return ["/static/speaker.gif", false];
+    }
+  }
+
   if (tim == "") {
     return ["/static/deleted.png", false];
   } else if (imageFiles.includes(ext)) {
@@ -356,7 +378,7 @@ function makeCatalogThread(thread, page, size) {
   try { hidden = getJson("hiddenthreads")[board].hasOwnProperty(thread.no) } catch { hidden = false };
   let threadTime = new Date(thread.time * 1000);
   let hoverTime= `${months[threadTime.getMonth()]} ${("0" + threadTime.getDate()).slice(-2)} ${("0" + threadTime.getHours()).slice(-2)}:${("0" + threadTime.getMinutes()).slice(-2)}`;
-  let imageThumbnail = getThumbnailUrl(thread.tim, thread.ext, board);
+  let imageThumbnail = getThumbnailUrl(thread.tim, thread.ext, thread.embed, board);
   let imageHidden;
   try { imageHidden = getJson("hiddenimages")[board][thread.no]["index"].includes(0) } catch { imageHidden = false };
   return `
@@ -383,7 +405,7 @@ function makeIndexFile(multifile, postNo, reqBoard, index, tn_h, tn_w, h, w, fsi
   if (tim == "") {
     return `<div class="file"><img class="post-image deleted" src="/static/deleted.png" alt=""></div>`
   }
-  let thumbnail = getThumbnailUrl(tim, ext, reqBoard);
+  let thumbnail = getThumbnailUrl(tim, ext, null, reqBoard);
   let hidden;
   try { hidden = getJson("hiddenimages")[reqBoard][postNo]["index"].includes(index) } catch { hidden = false };
   let fileHtml = `
@@ -443,7 +465,7 @@ function makeIndexThread(thread, reqBoard, expanded) {
 </form>`
 
     threadHtml += `
-    ${type == "op" ? `<div class="files">${files.join("")}</div>` : ""}
+    ${type == "op" ? post.embed ? post.embed : `<div class="files">${files.join("")}</div>` : ""}
     <div class="post ${type}${multifile ? " nowrap" : ""}${expanded && post.no < expandedAbove && type == "reply" ? " omitted-post" : ""}" id="${type}_${post.no}">
       <p class="intro">
         <input type="checkbox" class="delete" name="delete_${post.no}" id="delete_${post.no}">
@@ -459,6 +481,7 @@ function makeIndexThread(thread, reqBoard, expanded) {
         ${post.sticky == 1 ? "📌" : ""}${post.locked == 1 ? "🔒" : ""}
       </p>
       ${type == "reply" && files.length > 0 ? `<div class="files">${files.join("")}</div>` : ""}
+      ${type == "reply" && post.embed ? post.embed : ""}
       <div class="body">${type == "op" ? postActions : ""}${post.hasOwnProperty("com") ? post.com : ""}</div>
       ${type == "reply" ? postActions : ""}
       ${type == "op" && post.omitted_posts > 0 ? `<span class="omitted"><span>${post.omitted_posts} posts${post.omitted_images > 0 ? ` and ${post.omitted_images} image replies` : ""} omitted. </span><a class="thread-expand" href="javascript:void(0)"></a></span>` : ""}
