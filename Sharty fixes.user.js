@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.20
+// @version     2.21
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.20";
+const version = "v2.21";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -666,20 +666,26 @@ document.addEventListener("click", e => {
     t.closest(".post").setAttribute("manual-cutoff", t.closest(".post").classList.toggle("sf-cutoff"));
   } else if (t.classList.contains("sf-formatting-help")) {
     let help = `
+      <strong>'''bold'''</strong><br>
+      <em>''italics''</em><br>
+      <u>__underline__</u><br>
+      <s>~~strikethrough~~</s><br>
+      <code>\`\`\`codetext\`\`\`</code><br>
+      <span class="spoiler">**spoiler**</span><br>
+      <big>+=big=+</big><br>
+      <span class="rotate">#spinning#</span><br>
       <span class="quote">&gt;greentext</span><br>
       <span class="quote2">&lt;orangetext</span><br>
       <span class="heading">==redtext==</span><br>
       <span class="heading2">--bluetext--</span><br>
-      <span class="spoiler">**spoiler**</span><br>
-      <span class="glow">%%glow%%</span><br>
+      <font color="FD3D98"><b>-~-pinktext-~-</b></font><br>
+      <span class="glow">%%green glow%%</span><br>
       <span style="text-shadow:0px 0px 40px #fffb00, 0px 0px 2px #fffb00">::yellow glow::</span><br>
-      <span class="rotate">#spintext#</span><br>
-      <big>+=big text=+</big><br>
-      <em>''italics''</em><br>
-      <b>'''bold'''</b><br>
-      <u>__underline__</u><br>
-      <s>~~strikethrough~~</s><br>
-      <code>\`\`\`code\`\`\`</code><br>
+      <span style="text-shadow:0px 0px 40px #36d7f7, 0px 0px 2px #36d7f7">;;blue glow;;</span><br>
+      <span style="background: linear-gradient(to left, red, orange , yellow, green, cyan, blue, violet);-webkit-background-clip: text;-webkit-text-fill-color: transparent;">~-~rainbowtext~-~</span><br>
+      <span style="background: linear-gradient(to left, red, orange , yellow, green, cyan, blue, violet);-webkit-background-clip: text;-webkit-text-fill-color: transparent;"><span stye="text-shadow:0px 0px 40px #fffb00, 0px 0px 2px #fffb00">~-~::gold text::~-~</span></span><br>
+      <span style="background: linear-gradient(to left, red, orange , yellow, green, cyan, blue, violet);-webkit-background-clip: text;-webkit-text-fill-color: transparent;"><span class="glow">~-~%%gemerald text%%~-~</span></span><br>
+      <span style="background: linear-gradient(to left, red, orange , yellow, green, cyan, blue, violet);-webkit-background-clip: text;-webkit-text-fill-color: transparent;"><span style="text-shadow:0px 0px 40px #36d7f7, 0px 0px 2px #36d7f7">~-~;;diamond text;;~-~</span></span>
     `;
     customAlert(help)
   } else if (t.id == "sf-file-url" && !t.classList.contains("sf-loading")) {
