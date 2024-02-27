@@ -11,12 +11,12 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.21
+// @version     2.22
 // @author      Xyl
 // @description Enhancements for the 'ty
 // ==/UserScript==
 
-const version = "v2.21";
+const version = "v2.22";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -501,8 +501,8 @@ function solveCaptcha() {
 }
 
 if (passwordBox = document.querySelector("form[name=post] input[name=password]")) {
-  passwordBox.setAttribute("type", "password");
-  passwordBox.insertAdjacentHTML("afterend", `<input type="button" name="toggle-password" value="Show">`);
+  passwordBox.classList.add("password-hidden");
+  passwordBox.insertAdjacentHTML("beforebegin", `<input type="button" name="toggle-password" value="Show">`);
 }
 
 document.querySelectorAll("form[name=post] input[type=submit]").forEach(e => {
@@ -603,11 +603,11 @@ document.addEventListener("click", e => {
   } else if (t.classList.contains("board_image")) {
     t.src = `${t.src.split("?")[0]}?${Date.now()}`;
   } else if (t.matches("input[name=toggle-password]")) {
-    if (passwordBox.getAttribute("type") == "password") {
-      passwordBox.setAttribute("type", "text");
+    if (passwordBox.classList.contains("password-hidden")) {
+      passwordBox.classList.remove("password-hidden");
       t.value = "Hide";
     } else {
-      passwordBox.setAttribute("type", "password");
+      passwordBox.classList.add("password-hidden");
       t.value = "Show";
     }
   } else if (t.id == "mass-reply") {
@@ -861,7 +861,8 @@ document.head.insertAdjacentHTML("beforeend", `
   .mobile-style .g-recaptcha-bubble-arrow,
   .catty-thread.sf-filtered,
   .showing-hidden .catty-thread.hidden.sf-filtered,
-  .hide-quote-buttons .quote-buttons {
+  .hide-quote-buttons .quote-buttons,
+  .password-hidden {
     display: none !important;
   }
 
@@ -932,7 +933,7 @@ document.head.insertAdjacentHTML("beforeend", `
   }
 
   input[name=toggle-password] {
-    margin-left: 2px;
+    margin-right: 2px;
   }
 
   .sf-formatting-help {
