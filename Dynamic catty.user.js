@@ -3,15 +3,17 @@
 // @namespace   soyjak.party
 // @match       http*://soyjak.party/*
 // @match       http*://www.soyjak.party/*
+// @match       http*://soygem.party/*
 // @exclude     /https?://(?:www.)?soyjak.party/[a-zA-Z\d]*.html/
+// @exclude     /https?://(?:www.)?soygem.party/[a-zA-Z\d]*.html/
 // @grant       GM_getValue
 // @grant       GM_setValue
-// @version     1.1.0
+// @version     1.2.0
 // @author      Xyl
 // @description Load the sharty index and catalog dynamically
 // ==/UserScript==
 
-const version = "v1.1.0";
+const version = "v1.2.0";
 console.log(`Dynamic catty ${version}`);
 
 const namespace = "DynamicCatty.";
@@ -95,6 +97,8 @@ const audioFiles = [".aac", ".mp3", ".m4a", ".flac", ".wav", ".ogg", ".oga", ".o
 const videoFiles = [".3gp", ".mpg", ".mpeg", ".mp4", ".m4v", ".m4p", ".ogv", ".webm", ".mkv", ".mov", ".wmv", ".flv"];
 const domain = window.location.origin;
 const board = window.location.pathname.split("/")[1];
+
+const threadUrl = domain.includes("soygem") ? "res" : "thread";
 
 function customAlert(a) {
     document.body.insertAdjacentHTML("beforeend", `
@@ -385,7 +389,7 @@ function makeCatalogThread(thread, page, size) {
 <div class="catty-thread${hidden ? " hidden" : ""}" data-reply="${thread.replies}"
      data-bump="${thread.last_modified}" data-time="${thread.time}" data-id="${thread.no}" data-sticky="${thread.sticky == 1}" data-locked="${thread.locked == 1}">
     <div class="thread grid-li grid-size-${size}${imageHidden ? " image-hidden" : ""}">
-        <a href="/${board}/thread/${thread.no}${!!thread.semantic_url ? `-${thread.semantic_url}` : ""}.html" file-source="${domain}/${board}/src/${thread.tim + thread.ext}">
+        <a href="/${board}/${threadUrl}/${thread.no}${!!thread.semantic_url ? `-${thread.semantic_url}` : ""}.html" file-source="${domain}/${board}/src/${thread.tim + thread.ext}">
           <img ${imageHidden ? "hidden-src" : "src"}="${imageThumbnail[0]}" id="img-${thread.no}" data-subject="${thread.hasOwnProperty("sub") ? thread.sub : ""}" data-name="${thread.name}"
                class="${board} thread-image${imageThumbnail[1] ? " hoverable" : ""}" title="${hoverTime}" onerror="fixThumbnail(this)">
         </a>
@@ -477,7 +481,7 @@ function makeIndexThread(thread, reqBoard, expanded) {
           ${post.hasOwnProperty("country") ? `<img class="flag" src="/static/flags/${post.country.toLowerCase()}.png" style="width:16px; height:11px;" alt="${post.country_name}" title="${post.country_name}">` : ""}
           <time datetime="${timestampToUTCString(post.time)}" title="${timeText}">${timestampToRelativeTime(post.time)}</time>
         </label>
-        <a class="post_no" id="post_no_${post.no}" onclick="highlightReply(${post.no})" href="/${reqBoard}/thread/${type == "op" ? post.no : opPost}.html#${post.no}">No.</a><a class="post_no" onclick="citeReply(${post.no})" href="/${reqBoard}/thread/${opPost}${!!thread.semantic_url ? `-${thread.semantic_url}` : ""}.html#q${post.no}">${post.no}</a><span class="mentioned unimportant"></span>
+        <a class="post_no" id="post_no_${post.no}" onclick="highlightReply(${post.no})" href="/${reqBoard}/${threadUrl}/${type == "op" ? post.no : opPost}.html#${post.no}">No.</a><a class="post_no" onclick="citeReply(${post.no})" href="/${reqBoard}/${threadUrl}/${opPost}${!!thread.semantic_url ? `-${thread.semantic_url}` : ""}.html#q${post.no}">${post.no}</a><span class="mentioned unimportant"></span>
         ${post.sticky == 1 ? "📌" : ""}${post.locked == 1 ? "🔒" : ""}
       </p>
       ${type == "reply" && files.length > 0 ? `<div class="files">${files.join("")}</div>` : ""}
@@ -495,7 +499,7 @@ function makeIndexThread(thread, reqBoard, expanded) {
 function postFixes() {
   document.querySelectorAll(".body a[onclick^='highlightReply']").forEach(e => {
     let isOwnPost;
-    try { isOwnPost = getJson("own_posts")[e.href.match(/(?<=soyjak\.party\/)[a-zA-Z0-9]*/)].includes(e.innerText.match(/\d*$/).toString()) } catch { isOwnPost = false }
+    try { isOwnPost = getJson("own_posts")[e.href.match(/(?<=(?:soyjak|soygem)\.party\/)[a-zA-Z0-9]*/)].includes(e.innerText.match(/\d*$/).toString()) } catch { isOwnPost = false }
     let o = document.querySelector(`#op_${e.innerText.substr(2)}, #reply_${e.innerText.substr(2)}`);
     if (o && e.closest(".thread") == o.closest(".thread")) {
       e.href = `#${e.innerText.substr(2)}`
@@ -528,7 +532,7 @@ function loadFullThread(threadNo, reqBoard, showOmitted, callback = []) {
       op.classList.add("loading-omitted");
     }
   }
-  fetch(`${domain}/${reqBoard}/thread/${threadNo}.json`).then(response => response.json()).then(json => {
+  fetch(`${domain}/${reqBoard}/${threadUrl}/${threadNo}.json`).then(response => response.json()).then(json => {
     let threadHTML = makeIndexThread(json, reqBoard, document.querySelector(`div[id*="${threadNo}"]`));
     if ((thread = document.querySelector(`#thread_${threadNo}`)) && document.querySelector(`div[id*="${threadNo}"]`)) {
       thread.outerHTML = threadHTML;
@@ -617,12 +621,12 @@ function dynContent() {
     window.location.replace(window.location.href.slice(0, -10));
   } else if (window.location.href.endsWith("catalog.html")) {
     window.location.replace(`${domain}/${board}#catalog`);
-  } else if ((number = window.location.pathname.match(/\d*(?=\.html$)/)) && !window.location.pathname.match("/thread/")) {
+  } else if ((number = window.location.pathname.match(/\d*(?=\.html$)/)) && !window.location.pathname.match(`/${threadUrl}/`)) {
     history.replaceState(null, null, `${domain}/${board}/#p${number[0]}`);
   }
   document.querySelectorAll("a").forEach(e => {
-    if (e.href.match("soyjak.party")) {
-      e.href = e.href.replace(/(\/[a-zA-Z0-9]*)\/\//, "$1/").replace("index.html", "").replace("catalog.html", "#catalog").replace(/(soyjak.party\/[a-zA-Z0-9]*\/)([0-9]*).html/, "$1#p$2");
+    if (e.href.match("soyjak.party") || e.href.match("soygem.party")) {
+      e.href = e.href.replace(/(\/[a-zA-Z0-9]*)\/\//, "$1/").replace("index.html", "").replace("catalog.html", "#catalog").replace(/((?:soyjak|soygem)\.party\/[a-zA-Z0-9]*\/)([0-9]*).html/, "$1#p$2");
     }
     if (e.matches(".pages .selected")) {
       e.href = `${domain}/${board}/#p${e.innerText}`
@@ -796,7 +800,7 @@ function addExtras() {
         window.scrollTo({top: o.getBoundingClientRect().top - document.querySelector(".boardlist").getBoundingClientRect().height + window.pageYOffset});
       } else {
         console.log("awa")
-        window.location = `${domain}/${board}/thread/${t.closest(".thread").id.split("_")[1]}.html${t.getAttribute("href").split("/").pop()}`;
+        window.location = `${domain}/${board}/${threadUrl}/${t.closest(".thread").id.split("_")[1]}.html${t.getAttribute("href").split("/").pop()}`;
       }
     } else if (t.classList.contains("hide-toggle")) {
       t.parentNode.classList.toggle("thread-hidden") ? addToJson("hiddenthreads", `${board}.${t.parentNode.id.split("_")[1]}`, Math.floor(Date.now() / 1000)) : removeFromJson("hiddenthreads", `${board}.${t.parentNode.id.split("_")[1]}`);
@@ -858,7 +862,7 @@ function addExtras() {
 
   document.addEventListener("mouseover", e => {
     let t = e.target;
-    if (t.matches(".body a[onclick^='highlightReply']:not(.dead), .mentioned a, .body a[href^='/'][href*='/thread/']")) {
+    if (t.matches(`.body a[onclick^='highlightReply']:not(.dead), .mentioned a, .body a[href^='/'][href*='${threadUrl}']`)) {
       if (!document.querySelector("#dyn-content")) {
         return;
       }
@@ -894,8 +898,8 @@ function addExtras() {
             }
             if (!thread.classList.contains("loading-hover")) {
               thread.classList.add("loading-hover");
-              if (t.matches(".body a") && t.href.match("/thread/")) {
-                loadFullThread(t.href.match(/\d*(?=\.html)/), t.href.match(/[a-zA-Z0-9]*(?=\/+thread)/), false, [highlight, e]);
+              if (t.matches(".body a") && t.href.match(`${threadUrl}`)) {
+                loadFullThread(t.href.match(/\d*(?=\.html)/), t.href.match(/[a-zA-Z0-9]*(?=\/+(?:thread|res))/), false, [highlight, e]);
 
               } else {
                 loadFullThread(thread.id.split("_")[1], board, false);
@@ -917,7 +921,7 @@ function addExtras() {
 
   document.addEventListener("mouseout", e => {
     let t = e.target;
-    if (t.matches(".body a[onclick^='highlightReply']:not(.dead), .mentioned a, .body a[href^='/'][href*='/thread/']")) {
+    if (t.matches(`.body a[onclick^='highlightReply']:not(.dead), .mentioned a, .body a[href^='/'][href*='/${threadUrl}/']`)) {
       if (hover = document.querySelector("#sharty-preview")) {
         hover.remove();
       }
