@@ -7,16 +7,19 @@
 // @match       http*://www.soyjaks.party/*
 // @match       http*://soychan.org/*
 // @match       http*://www.soychan.org/*
+// @match       http*://soygem.party/*
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.22
+// @version     2.3
 // @author      Xyl
 // @description Enhancements for the 'ty
+// @downloadURL https://update.greasyfork.org/scripts/476540/Sharty%20fixes.user.js
+// @updateURL https://update.greasyfork.org/scripts/476540/Sharty%20fixes.meta.js
 // ==/UserScript==
 
-const version = "v2.22";
+const version = "v2.3";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -230,7 +233,7 @@ function fixPost(post) {
   }
   timeElement.outerHTML = `<span datetime=${timeElement.getAttribute("datetime")}>${timeElement.innerText}</span>`;
   post.querySelector(".intro").insertAdjacentHTML("beforeend", `<span class="quote-buttons"></span>`);
-  if (isEnabled("show-quote-button")) {
+  if (isEnabled("show-quote-button") && !location.origin.includes("soygem")) {
     post.querySelector(".quote-buttons").insertAdjacentHTML("beforeend", `<a href="javascript:void(0);" class="quick-quote">[>]</a>`);
     post.querySelector(".quote-buttons").insertAdjacentHTML("beforeend", `<a href="javascript:void(0);" class="quick-orange">[<]</a>`);
   }
@@ -337,7 +340,7 @@ function fixTime() {
 function initFixes() {
   document.querySelectorAll("form[name=post] th").forEach(e => {
     if (e.innerText == "Comment") {
-      e.insertAdjacentHTML("beforeend", `<sup title="Formatting help" class="sf-formatting-help">?</sup><br><div class="comment-quotes"><a href="javascript:void(0);" class="comment-quote">[>]</a><a href="javascript:void(0);" class="comment-orange">[<]</a></div>`);
+      e.insertAdjacentHTML("beforeend", `${location.origin.includes("soygem") ? '' : '<sup title="Formatting help" class="sf-formatting-help">?</sup><br>'}<div class="comment-quotes"><a href="javascript:void(0);" class="comment-quote">[>]</a><a href="javascript:void(0);" class="comment-orange">[<]</a></div>`);
     }
   });
   if (typeof GM_xmlhttpRequest == "function") {
