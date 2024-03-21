@@ -12,14 +12,14 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.3.1
+// @version     2.30
 // @author      Xyl
 // @description Enhancements for the 'ty
 // @downloadURL https://update.greasyfork.org/scripts/476540/Sharty%20fixes.user.js
 // @updateURL https://update.greasyfork.org/scripts/476540/Sharty%20fixes.meta.js
 // ==/UserScript==
 
-const version = "v2.3.1";
+const version = "v2.30";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
