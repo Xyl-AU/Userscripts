@@ -12,14 +12,14 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @connect     *
-// @version     2.3
+// @version     2.3.1
 // @author      Xyl
 // @description Enhancements for the 'ty
 // @downloadURL https://update.greasyfork.org/scripts/476540/Sharty%20fixes.user.js
 // @updateURL https://update.greasyfork.org/scripts/476540/Sharty%20fixes.meta.js
 // ==/UserScript==
 
-const version = "v2.3";
+const version = "v2.3.1";
 console.log(`Sharty fixes ${version}`);
 
 const namespace = "ShartyFixes.";
@@ -119,6 +119,8 @@ function customAlert(a) {
   </div>
 </div>`);
 }
+
+const isMobile = !!navigator.userAgent.match(/iPhone|iPod|iPad|Android|Opera Mini|Blackberry|PlayBook|Windows Phone|Tablet PC|Windows CE|IEMobile/i);
 
 const fileToMime = {
   "jpg": "image/jpeg",
@@ -440,7 +442,7 @@ window.addEventListener("keydown", e => {
 });
 
 // autofocus textarea
-if ((textarea = document.querySelector("textarea[name=body]")) && document.documentElement.classList.contains("desktop-style") && window.location.hash[1] != "q") {
+if ((textarea = document.querySelector("textarea[name=body]")) && !isMobile && window.location.hash[1] != "q") {
   textarea.focus({
     preventScroll: true
   });
@@ -780,7 +782,7 @@ window.addEventListener("load", () => {
   }
 });
 
-if (getValue("hover-images") && document.documentElement.matches(".desktop-style")) {
+if (getValue("hover-images") && !isMobile) {
   let adjustHoverPos = (hover, x, y) => {
     if (!document.querySelector(".post-image:hover, .thread-image:hover")) {
       hover.remove();
